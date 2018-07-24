@@ -8,6 +8,40 @@ from collections import OrderedDict
 
 import matplotlib.pylab as plt
 
+class MulLayer:
+    """乗算レイヤ"""
+
+    def __init__(self):
+        self.x = None
+        self.y = None
+
+    def forward(self, x, y):
+        self.x = x
+        self.y = y
+        out = x * y
+        return out
+
+    def backward(self, dout):
+        dx = dout * self.y  # xとyをひっくり返す
+        dy = dout * self.x
+        return dx, dy
+
+
+class AddLayer:
+    """加算レイヤ"""
+
+    def __init__(self):
+        pass
+
+    def forward(self, x, y):
+        out = x + y
+        return out
+
+    def backward(self, dout):
+        dx = dout * 1
+        dy = dout * 1
+        return dx, dy
+
 
 class Relu:
     def __init__(self):
@@ -215,12 +249,66 @@ class TwoLayerNet:
 
         return grads
 
+# -----------------------------------------------------
+# リンゴの買い物
+print("リンゴの買い物")
+
+apple = 100
+apple_num = 2
+tax = 1.1
+
+# リンゴの買い物 - layer
+mul_apple_layer = MulLayer()
+mul_tax_layer = MulLayer()
+
+# リンゴの買い物 - forward
+apple_price = mul_apple_layer.forward(apple, apple_num)
+price = mul_tax_layer.forward(apple_price, tax)
+print(price)
+
+# リンゴの買い物 - backward
+dprice = 1
+dapple_price, dtax = mul_tax_layer.backward(dprice)
+dapple, dapple_num = mul_apple_layer.backward(dapple_price)
+print(dapple, dapple_num, dtax)
+
+
+# -----------------------------------------------------
+# リンゴ2個とみかん3個の買い物
+print("リンゴ2個とみかん3個の買い物")
+apple = 100
+app_num = 2
+orange = 150
+orange_num = 3
+tax = 1.1
+
+# リンゴ2個とみかん3個の買い物 - layer
+mul_apple_layer = MulLayer()
+mul_orange_layer = MulLayer()
+add_apple_orange_layer = AddLayer()
+mul_tax_layer = MulLayer()
+
+# リンゴ2個とみかん3個の買い物 - forward
+apple_price = mul_apple_layer.forward(apple, apple_num)
+orange_price = mul_orange_layer.forward(orange, orange_num)
+all_price = add_apple_orange_layer.forward(apple_price, orange_price)
+price = mul_tax_layer.forward(all_price, tax)
+print(price)
+
+# リンゴ2個とみかん3個の買い物 - backward
+dprice = 1
+dall_price, dtax = mul_tax_layer.backward(dprice)
+dapple_price, dorange_price = add_apple_orange_layer.backward(dall_price)
+dorange, dorange_num = mul_orange_layer.backward(dorange_price)
+dapple, dapple_num = mul_apple_layer.backward(dapple_price)
+print(dapple_num, dapple, dorange, dorange_num, dtax)
+
 
 # 手書き数字データの読み込み
 (x_train, t_train), (x_test, t_test) = load_mnist(normalize=True, one_hot_label=True)
 
 # ハイパーパラメータ
-iters_num = 10000
+iters_num = 1000
 train_size = x_train.shape[0]
 batch_size = 100
 learning_rate = 0.1
