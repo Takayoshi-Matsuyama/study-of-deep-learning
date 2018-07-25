@@ -44,11 +44,21 @@ class AddLayer:
 
 
 class Relu:
+    """Rectified Linear Unit"""
+    
     def __init__(self):
         self.mask = None
 
 
     def forward(self, x):
+        """ReLU 順伝播
+
+        Args:
+            x: 入力データのNumpy配列
+
+        Returns: ReLU値のNumpy配列
+
+        """
         self.mask = (x <= 0)
         out = x.copy()
         out[self.mask] = 0
@@ -56,6 +66,14 @@ class Relu:
 
 
     def backward(self, dout):
+        """ReLU 逆伝播
+
+        Args:
+            dout: ReLU値のNumpy配列
+
+        Returns: ReLU 逆伝播値のNumpy配列
+
+        """
         dout[self.mask] = 0
         dx = dout
         return dx
@@ -65,13 +83,30 @@ class Sigmoid:
     def __init__(self):
         self.out = None
 
+
     def forward(self, x):
+        """Sigmoid 順伝播
+
+        Args:
+            x: 入力データのNumpy配列
+
+        Returns: Sigmoid値のNumpy配列
+
+        """
         out = 1 / (1 + np.exp(-x))
         self.out = out
         return out
 
 
     def backward(self, dout):
+        """Sigmoid 逆伝播
+
+        Args:
+            dout: Sigmoid値のNumpy配列
+
+        Returns: Sigmoid 逆伝播のNumpy配列
+
+        """
         dx = dout * (1.0 - self.out) * self.out
         return dx
 
