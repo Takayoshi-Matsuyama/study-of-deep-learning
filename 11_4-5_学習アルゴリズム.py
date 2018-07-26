@@ -113,8 +113,8 @@ class Sigmoid:
 
 class Affine:
     def __init__(self, W, b):
-        self.W = W
-        self.b = b
+        self.W = W  # 重み (Weight)
+        self.b = b  # バイアス (Bias)
         self.x = None
         self.dW = None
         self.db = None
@@ -129,7 +129,7 @@ class Affine:
     def backward(self, dout):
         dx = np.dot(dout, self.W.T)
         self.dW = np.dot(self.x.T, dout)
-        self.db = np.sum(dout, axis=0)
+        self.db = np.sum(dout, axis=0)  # 0番目の軸(データを単位とした軸)に対して総和を求める
         return dx
 
 
