@@ -113,20 +113,42 @@ class Sigmoid:
 
 class Affine:
     def __init__(self, W, b):
-        self.W = W  # 重み (Weight)
-        self.b = b  # バイアス (Bias)
+        """Affine変換(行列の積)のレイヤ：初期化
+
+        Args:
+            W: 重み (Weight)を表すNumpy2次元配列
+            b: バイアス (Bias)を表すNumpy配列
+        """
+        self.W = W
+        self.b = b
         self.x = None
         self.dW = None
         self.db = None
 
 
     def forward(self, x):
+        """Affine変換 順伝播
+
+        Args:
+            x: 入力データのNumpy配列
+
+        Returns: 行列の積の結果のNumpy配列
+
+        """
         self.x = x
         out = np.dot(x, self.W) + self.b
         return out
 
 
     def backward(self, dout):
+        """Affine変換 逆伝播
+
+        Args:
+            dout: 行列の積の結果のNumpy配列
+
+        Returns: 逆伝播のNumpy配列
+
+        """
         dx = np.dot(dout, self.W.T)
         self.dW = np.dot(self.x.T, dout)
         self.db = np.sum(dout, axis=0)  # 0番目の軸(データを単位とした軸)に対して総和を求める
@@ -141,6 +163,17 @@ class SoftmaxWithLoss:
 
 
     def forward(self, x, t):
+        """ SoftmaxWithLoss 順伝播
+            Softmaxレイヤは、入力データを受け取り、正規化して出力
+            Cross Entropy Errorレイヤは、Softmaxレイヤの出力と教師ラベルを受け取り、損失を出力
+
+        Args:
+            x: 入力データのNumpy配列
+            t: 教師ラベルのNumpy配列
+
+        Returns: 損失のNumpy配列
+
+        """
         self.t = t
         self.y = softmax(x)
         self.loss = cross_entropy_error(self.y, self.t)
@@ -148,6 +181,15 @@ class SoftmaxWithLoss:
 
 
     def backward(self, dout=1):
+        """ SoftmaxWithLoss 逆伝播
+
+        Args:
+            dout: 損失のNumpy配列
+
+        Returns: 逆伝播のNumpy配列
+        　　　　　Softmaxレイヤの出力yと教師ラベルtの差
+
+        """
         batch_size = self.t.shape[0]
         dx = (self.y - self.t) / batch_size
         return dx
