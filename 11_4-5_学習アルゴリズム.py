@@ -388,7 +388,7 @@ print(dapple_num, dapple, dorange, dorange_num, dtax)
 iters_num = 1000
 train_size = x_train.shape[0]
 batch_size = 100
-learning_rate = 0.1
+learning_rate = 0.1  # 学習率
 
 # 2層ニューラルネットワーク
 network = TwoLayerNet(input_size=784, hidden_size=50, output_size=10);
