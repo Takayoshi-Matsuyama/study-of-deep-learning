@@ -384,20 +384,33 @@ print(dapple_num, dapple, dorange, dorange_num, dtax)
 # 手書き数字データの読み込み
 (x_train, t_train), (x_test, t_test) = load_mnist(normalize=True, one_hot_label=True)
 
-# ハイパーパラメータ
+# 勾配確認
+## 準備
+network = TwoLayerNet(input_size=784, hidden_size=50, output_size=10)
+x_batch = x_train[:3]
+t_batch = t_train[:3]
+grad_numerical = network.numerical_gradient(x_batch, t_batch)
+grad_backprop = network.gradient(x_batch, t_batch)
+## 各重みの絶対誤差の平均を求める
+for key in grad_numerical.keys():
+    diff = np.average(np.abs(grad_backprop[key] - grad_numerical[key]))
+    print(key + ":" + str(diff))
+
+# 誤差伝播法を使った学習
+## ハイパーパラメータ
 iters_num = 1000
 train_size = x_train.shape[0]
 batch_size = 100
 learning_rate = 0.1  # 学習率
 
-# 2層ニューラルネットワーク
+## 2層ニューラルネットワーク
 network = TwoLayerNet(input_size=784, hidden_size=50, output_size=10);
 
 train_loss_list = []
 train_acc_list = []
 test_acc_list = []
 
-# 1エポックあたりの繰り返し数
+## 1エポックあたりの繰り返し数
 iter_per_epoch = max(train_size / batch_size, 1)
 
 for i in range(iters_num):
