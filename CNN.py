@@ -3,6 +3,10 @@ import sys, os
 sys.path.append(os.pardir)
 from common.util import im2col
 from common.util import col2im
+from collections import OrderedDict
+from common.layers import Relu
+from common.layers import Affine
+from common.layers import SoftmaxWithLoss
 
 # im2colの使用例
 x1 = np.random.rand(1, 3, 7, 7)
@@ -115,5 +119,21 @@ class SimpleConvNet:
         self.params['W3'] = weight_init_std * np.random.randn(hidden_size, output_size)
         self.params['b3'] = np.zeros(output_size)
 
-        
+        # レイヤの生成
+        self.layers = OrderedDict()
+        self.layers['Conv1'] = Convolution(self.params['W1'],
+                                           self.params['b1'],
+                                           conv_param['stride'],
+                                           conv_param['pad'])
+        self.layers['Relu1'] = Relu()
+        self.layers['Pool1'] = Pooling(pool_h=2, pool_w=2, stride=2)
+        self.layers['Affine1'] = Affine(self.params['W2'],
+                                        self.params['b2'])
+        self.layers['Relu2'] = Relu()
+        self.layers['Affine2'] = Affine(self.params['W3'],
+                                        self.params['b3'])
+
+        self.last_layer = SoftmaxWithLoss()
+
+
 
